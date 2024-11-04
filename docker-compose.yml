@@ -1,44 +1,48 @@
-version: '3.8'
+version: '3.8'  # Убедитесь, что версия указана
 
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: weather_test
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 89562876
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    command: >
+      bash -c "python weather_project/manage.py migrate &&
+      python weather_project/manage.py test weather_app &&
+      python weather_project/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/marketplace
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=postgres://admin:89562876@db:5432/test_weather
     depends_on:
       - db
-    volumes:
-      - .:/app
-    command: >
-      bash -c "python weather_project/manage.py test weather_app &&
-      python weather_project/manage.py migrate &&
-      python weather_project/manage.py runserver 0.0.0.0:8000"
-
+    environment:
+      POSTGRES_DB: weather_test
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 89562876
+      DJANGO_SETTINGS_MODULE: weather_project.settings  
+      
   bot:
     build:
       context: .
       dockerfile: Dockerfile
     command: python Bot/Bot.py
     environment:
-      - DATABASE_URL=postgres://admin:89562876@db:5432/test_weather
+      POSTGRES_DB: weather_test
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 89562876
     depends_on:
       - db
     volumes:
       - .:/app
-
-  db:
-    image: postgres:13
-    restart: always
-    environment:
-      POSTGRES_DB: test_weather
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: 89562876
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

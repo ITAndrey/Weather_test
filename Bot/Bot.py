@@ -11,8 +11,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Настройки подключения к PostgreSQL
-DB_HOST = 'localhost'
-DB_NAME = 'test_weather'
+DB_HOST = 'db'
+DB_NAME = 'weather_test'
 DB_USER = 'admin'
 DB_PASSWORD = '89562876'
 DB_PORT = '5432'
