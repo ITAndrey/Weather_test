@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода в городе</title>
+    {% load static %}  <!-- Добавлено для загрузки тегов static -->
+    <link rel="stylesheet" href="{% static 'weather_app/styles.css' %}">
+</head>
+<body>
+    <h1>Получите информацию о погоде</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="city">Введите название города:</label>
+        <input type="text" name="city" id="city" required>
+        <button type="submit">Получить погоду</button>
+    </form>
+
+    {% if weather_data %}
+        <div class="result">
+            <h2>Погода в {{ weather_data.city_name }}:</h2>
+            <p>Температура: {{ weather_data.temperature|floatformat:0 }} °C</p>
+            <p>Давление: {{ weather_data.pressure|floatformat:0 }} мм рт. ст.</p>
+            <p>Скорость ветра: {{ weather_data.wind_speed|floatformat:0 }} м/с</p>
+            <p>Описание: {{ weather_data.weather_text }}</p>
+        </div>
+    {% elif error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+    <!-- Кнопка для перехода к истории запросов -->
+    <div class="history-button">
+        <a href="{% url 'history_view' %}" class="button">История запросов</a>
+    </div>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745; /* Зеленый цвет */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838; /* Темно-зеленый цвет при наведении */
+        }
+
+        .result {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .history-button {
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF; /* Цвет фона кнопки */
+            color: white; /* Цвет текста */
+            text-decoration: none; /* Убираем подчеркивание */
+            border-radius: 5px; /* Скругленные углы */
+            font-size: 16px; /* Размер шрифта */
+        }
+
+        .button:hover {
+            background-color: #0056b3; /* Цвет фона кнопки при наведении */
+        }
+    </style>
+</body>
+</html>
